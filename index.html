@@ -9,12 +9,13 @@
 
     :root {
       --bg: #0b1020;
-      --panel: rgba(255, 255, 255, 0.94);
+      --panel: rgba(255, 255, 255, 0.95);
       --ink: #111827;
       --muted: #64748b;
-      --blue: #2563eb;
-      --blue-dark: #1d4ed8;
-      --chrome: rgba(15, 23, 42, 0.76);
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --accent-soft: #eff6ff;
+      --accent-rgb: 37, 99, 235;
     }
 
     html, body { height: 100%; }
@@ -25,9 +26,10 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: white;
       background:
-        radial-gradient(circle at 12% 0%, rgba(59, 130, 246, 0.24), transparent 34rem),
+        radial-gradient(circle at 12% 0%, rgba(var(--accent-rgb), 0.28), transparent 34rem),
         radial-gradient(circle at 92% 12%, rgba(168, 85, 247, 0.18), transparent 28rem),
-        var(--bg);
+        linear-gradient(135deg, #080d1c 0%, #111827 100%);
+      transition: background 260ms ease;
     }
 
     .deck {
@@ -55,14 +57,15 @@
     }
 
     .slider-slide main {
-      width: min(860px, 100%);
+      width: min(980px, 100%);
       background: var(--panel);
       border: 1px solid rgba(148, 163, 184, 0.28);
-      border-radius: 30px;
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.32);
-      padding: clamp(30px, 6vw, 64px);
+      border-radius: 34px;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34), 0 0 0 10px rgba(var(--accent-rgb), 0.08);
+      padding: clamp(30px, 5vw, 62px);
       text-align: center;
       color: var(--ink);
+      transition: box-shadow 220ms ease;
     }
 
     .eyebrow {
@@ -70,8 +73,8 @@
       margin-bottom: 18px;
       padding: 8px 14px;
       border-radius: 999px;
-      background: #eff6ff;
-      color: var(--blue-dark);
+      background: var(--accent-soft);
+      color: var(--accent-dark);
       font-size: 0.85rem;
       font-weight: 800;
       letter-spacing: 0.04em;
@@ -79,9 +82,9 @@
     }
 
     h1 {
-      max-width: 720px;
-      margin: 0 auto 34px;
-      font-size: clamp(2rem, 5vw, 3.75rem);
+      max-width: 780px;
+      margin: 0 auto 28px;
+      font-size: clamp(2.05rem, 5vw, 3.9rem);
       line-height: 1.04;
       letter-spacing: -0.05em;
       color: var(--ink);
@@ -89,29 +92,42 @@
 
     .score-card {
       display: inline-grid;
-      gap: 4px;
-      min-width: 132px;
-      margin-bottom: 34px;
-      padding: 18px 28px;
-      border-radius: 22px;
-      background: #111827;
+      grid-template-columns: auto auto;
+      align-items: end;
+      justify-content: center;
+      column-gap: 10px;
+      row-gap: 4px;
+      min-width: 190px;
+      margin-bottom: 18px;
+      padding: 22px 32px 20px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #111827, var(--accent-dark));
       color: white;
-      box-shadow: 0 18px 32px rgba(17, 24, 39, 0.24);
+      box-shadow: 0 20px 42px rgba(var(--accent-rgb), 0.28);
+      transition: background 220ms ease, box-shadow 220ms ease;
     }
 
     .score-label {
-      color: #cbd5e1;
-      font-size: 0.85rem;
-      font-weight: 800;
+      grid-column: 1 / -1;
+      color: rgba(255,255,255,0.76);
+      font-size: 0.86rem;
+      font-weight: 850;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
     #scoreValue {
-      font-size: 4.4rem;
-      line-height: 1;
+      font-size: clamp(5rem, 13vw, 8.2rem);
+      line-height: 0.86;
+      font-weight: 900;
+      letter-spacing: -0.09em;
+    }
+
+    .score-denominator {
+      margin-bottom: 0.45rem;
+      color: rgba(255,255,255,0.72);
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
       font-weight: 850;
-      letter-spacing: -0.08em;
     }
 
     .slider-wrap {
@@ -134,14 +150,14 @@
 
     input[type="range"] {
       width: 100%;
-      accent-color: var(--blue);
+      accent-color: var(--accent);
       cursor: pointer;
     }
 
     input[type="range"]::-webkit-slider-runnable-track {
       height: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #dbeafe, var(--blue));
+      background: linear-gradient(90deg, #e2e8f0, var(--accent));
     }
 
     input[type="range"]::-webkit-slider-thumb {
@@ -150,8 +166,8 @@
       margin-top: -11px;
       border: 4px solid white;
       border-radius: 50%;
-      background: var(--blue-dark);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+      background: var(--accent-dark);
+      box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.42);
       -webkit-appearance: none;
       appearance: none;
     }
@@ -159,7 +175,7 @@
     input[type="range"]::-moz-range-track {
       height: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #dbeafe, var(--blue));
+      background: linear-gradient(90deg, #e2e8f0, var(--accent));
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -167,8 +183,8 @@
       height: 28px;
       border: 4px solid white;
       border-radius: 50%;
-      background: var(--blue-dark);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+      background: var(--accent-dark);
+      box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.42);
     }
 
     .scale {
@@ -179,9 +195,40 @@
     }
 
     .helper-text {
-      margin-top: 22px;
-      color: #475569;
-      font-size: 1.08rem;
+      max-width: 680px;
+      margin: 18px auto 0;
+      color: #334155;
+      font-size: clamp(1.35rem, 2.4vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+    }
+
+    .insight-panel {
+      max-width: 720px;
+      margin: 24px auto 32px;
+      padding: 20px 22px;
+      border: 1px solid rgba(var(--accent-rgb), 0.22);
+      border-radius: 24px;
+      background: rgba(var(--accent-rgb), 0.08);
+      text-align: left;
+      transition: background 220ms ease, border-color 220ms ease;
+    }
+
+    .insight-kicker {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    #insightText {
+      color: #1f2937;
+      font-size: clamp(1rem, 1.8vw, 1.22rem);
+      line-height: 1.45;
+      font-weight: 650;
     }
 
     .pdf-frame {
@@ -214,12 +261,20 @@
   <div class="deck" id="deck" aria-live="polite">
     <section class="slide slider-slide active" data-title="Discipleship Strategy Slider">
       <main>
-        <div class="eyebrow">Self-assessment</div>
-        <h1>How strong do you feel your Discipleship strategy is?</h1>
+        <div class="eyebrow">Group reflection</div>
+        <h1>How strong is your Discipleship strategy right now?</h1>
 
         <section class="score-card" aria-live="polite">
-          <span class="score-label">Your score</span>
+          <span class="score-label" id="scoreLabel">Functional, but not unified</span>
           <span id="scoreValue">3</span>
+          <span class="score-denominator">/5</span>
+        </section>
+
+        <p class="helper-text" id="helperText">You have meaningful pieces in place, but the pathway may not feel fully clear or repeatable yet.</p>
+
+        <section class="insight-panel" aria-live="polite">
+          <span class="insight-kicker">What this means</span>
+          <p id="insightText">There is enough foundation to build from. The opportunity is to connect the pieces into a simple pathway people can understand, practice, and multiply.</p>
         </section>
 
         <div class="slider-wrap">
@@ -229,8 +284,6 @@
             <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
           </div>
         </div>
-
-        <p class="helper-text" id="helperText">Move the slider to rate your current strategy.</p>
       </main>
     </section>
   </div>
@@ -300,19 +353,53 @@
 
     const slider = document.querySelector('#discipleshipScore');
     const scoreValue = document.querySelector('#scoreValue');
+    const scoreLabel = document.querySelector('#scoreLabel');
     const helperText = document.querySelector('#helperText');
+    const insightText = document.querySelector('#insightText');
 
-    const labels = {
-      1: 'Needs significant attention.',
-      2: 'Some pieces are present, but gaps remain.',
-      3: 'Moderately strong with room to grow.',
-      4: 'Strong and mostly intentional.',
-      5: 'Very strong, clear, and repeatable.'
+    const scoreStates = {
+      1: {
+        label: 'Unclear and inconsistent',
+        helper: 'The pathway is hard to see.',
+        insight: 'This is the moment to simplify. Start by naming what a growing disciple looks like and the next clear step you want every person to take.',
+        accent: '#dc2626', accentDark: '#991b1b', accentSoft: '#fef2f2', accentRgb: '220, 38, 38'
+      },
+      2: {
+        label: 'Some pieces are present',
+        helper: 'There are good efforts, but they may feel disconnected.',
+        insight: 'You likely have programs, leaders, or moments that matter. The opportunity is to connect them into one understandable path instead of separate activities.',
+        accent: '#ea580c', accentDark: '#9a3412', accentSoft: '#fff7ed', accentRgb: '234, 88, 12'
+      },
+      3: {
+        label: 'Functional, but not unified',
+        helper: 'You have meaningful pieces in place, but the pathway may not feel fully clear or repeatable yet.',
+        insight: 'There is enough foundation to build from. The opportunity is to connect the pieces into a simple pathway people can understand, practice, and multiply.',
+        accent: '#2563eb', accentDark: '#1d4ed8', accentSoft: '#eff6ff', accentRgb: '37, 99, 235'
+      },
+      4: {
+        label: 'Strong and intentional',
+        helper: 'Your strategy is clear enough that people can follow it and leaders can reinforce it.',
+        insight: 'The next level is consistency. Focus on making the pathway visible in every ministry environment and helping leaders use the same language.',
+        accent: '#16a34a', accentDark: '#166534', accentSoft: '#f0fdf4', accentRgb: '22, 163, 74'
+      },
+      5: {
+        label: 'Clear, repeatable, multiplying',
+        helper: 'Your Discipleship pathway is simple, shared, and built to reproduce through leaders.',
+        insight: 'Now protect the clarity. Keep measuring whether people understand the pathway, are taking next steps, and are helping others take those same steps.',
+        accent: '#7c3aed', accentDark: '#5b21b6', accentSoft: '#f5f3ff', accentRgb: '124, 58, 237'
+      }
     };
 
     function updateScore() {
+      const state = scoreStates[slider.value];
+      document.documentElement.style.setProperty('--accent', state.accent);
+      document.documentElement.style.setProperty('--accent-dark', state.accentDark);
+      document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+      document.documentElement.style.setProperty('--accent-rgb', state.accentRgb);
       scoreValue.textContent = slider.value;
-      helperText.textContent = labels[slider.value];
+      scoreLabel.textContent = state.label;
+      helperText.textContent = state.helper;
+      insightText.textContent = state.insight;
     }
 
     slider.addEventListener('input', updateScore);
