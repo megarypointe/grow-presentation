@@ -204,89 +204,9 @@
       background: #111827;
     }
 
-    .nav-button {
-      position: fixed;
-      top: 50%;
-      z-index: 20;
-      width: 54px;
-      height: 74px;
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 999px;
-      color: white;
-      background: var(--chrome);
-      font-size: 2.4rem;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(14px);
-      transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
-    }
-
-    .nav-button:hover { background: rgba(37, 99, 235, 0.86); }
-    .nav-button:active { transform: translateY(-50%) scale(0.96); }
-    .nav-button[disabled] { opacity: 0.28; cursor: not-allowed; }
-    .nav-button.prev { left: 18px; }
-    .nav-button.next { right: 18px; }
-
-    .status-bar {
-      position: fixed;
-      left: 50%;
-      bottom: 16px;
-      z-index: 21;
-      transform: translateX(-50%);
-      display: inline-flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 14px;
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 999px;
-      background: var(--chrome);
-      color: rgba(255,255,255,0.92);
-      font-size: 0.92rem;
-      font-weight: 700;
-      backdrop-filter: blur(14px);
-      user-select: none;
-    }
-
-    .progress-track {
-      width: min(220px, 34vw);
-      height: 6px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.22);
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: inherit;
-      background: #60a5fa;
-      transition: width 180ms ease;
-    }
-
-    .hint {
-      position: fixed;
-      top: 14px;
-      left: 50%;
-      z-index: 21;
-      transform: translateX(-50%);
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.52);
-      color: rgba(255,255,255,0.8);
-      font-size: 0.84rem;
-      backdrop-filter: blur(14px);
-    }
-
     @media (max-width: 760px) {
-      .nav-button { width: 44px; height: 58px; font-size: 1.8rem; }
-      .nav-button.prev { left: 8px; }
-      .nav-button.next { right: 8px; }
       .slide { inset: 12px; }
       .pdf-frame { width: calc(100vw - 28px); max-height: calc(100vh - 104px); }
-      .hint { display: none; }
     }
   </style>
 </head>
@@ -315,15 +235,6 @@
     </section>
   </div>
 
-  <p class="hint">Use ← / → arrow keys or the side buttons</p>
-  <button class="nav-button prev" id="prevButton" type="button" aria-label="Previous slide">‹</button>
-  <button class="nav-button next" id="nextButton" type="button" aria-label="Next slide">›</button>
-
-  <div class="status-bar" aria-hidden="true">
-    <span id="slideCount">1 / 35</span>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-  </div>
-
   <script>
     const pdfSlides = [
       "page-001.webp", "page-002.webp", "page-003.webp", "page-004.webp", "page-005.webp",
@@ -336,10 +247,6 @@
     ];
 
     const deck = document.querySelector('#deck');
-    const prevButton = document.querySelector('#prevButton');
-    const nextButton = document.querySelector('#nextButton');
-    const slideCount = document.querySelector('#slideCount');
-    const progressFill = document.querySelector('#progressFill');
 
     pdfSlides.forEach((file, index) => {
       const section = document.createElement('section');
@@ -362,11 +269,6 @@
         slide.setAttribute('aria-hidden', index === currentSlide ? 'false' : 'true');
       });
 
-      prevButton.disabled = currentSlide === 0;
-      nextButton.disabled = currentSlide === slides.length - 1;
-      slideCount.textContent = `${currentSlide + 1} / ${slides.length}`;
-      progressFill.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
-
       // Preload the next slide image to keep navigation smooth.
       [currentSlide + 1, currentSlide - 1].forEach((index) => {
         const img = slides[index]?.querySelector('img');
@@ -385,39 +287,16 @@
     function nextSlide() { goToSlide(currentSlide + 1); }
     function prevSlide() { goToSlide(currentSlide - 1); }
 
-    prevButton.addEventListener('click', prevSlide);
-    nextButton.addEventListener('click', nextSlide);
-
     window.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+      if (event.key === 'ArrowRight') {
         event.preventDefault();
         nextSlide();
       }
-      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+      if (event.key === 'ArrowLeft') {
         event.preventDefault();
         prevSlide();
       }
-      if (event.key === 'Home') {
-        event.preventDefault();
-        goToSlide(0);
-      }
-      if (event.key === 'End') {
-        event.preventDefault();
-        goToSlide(slides.length - 1);
-      }
     });
-
-    let touchStartX = null;
-    window.addEventListener('touchstart', (event) => {
-      touchStartX = event.changedTouches[0].screenX;
-    }, { passive: true });
-
-    window.addEventListener('touchend', (event) => {
-      if (touchStartX === null) return;
-      const delta = event.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(delta) > 60) delta < 0 ? nextSlide() : prevSlide();
-      touchStartX = null;
-    }, { passive: true });
 
     const slider = document.querySelector('#discipleshipScore');
     const scoreValue = document.querySelector('#scoreValue');
