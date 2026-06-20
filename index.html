@@ -15,6 +15,9 @@
       --blue: #2563eb;
       --blue-dark: #1d4ed8;
       --chrome: rgba(15, 23, 42, 0.76);
+      --state-color: #8b5cf6;
+      --state-soft: #c4b5fd;
+      --state-rgb: 139, 92, 246;
     }
 
     html, body { height: 100%; }
@@ -54,70 +57,98 @@
       pointer-events: auto;
     }
 
+    .slider-slide {
+      background:
+        radial-gradient(circle at 50% 12%, rgba(139, 92, 246, 0.28), transparent 28rem),
+        linear-gradient(135deg, #eee7ff 0%, #f8f5ff 48%, #fff 100%);
+      border-radius: 20px;
+    }
+
     .slider-slide main {
-      width: min(860px, 100%);
-      background: var(--panel);
-      border: 1px solid rgba(148, 163, 184, 0.28);
-      border-radius: 30px;
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.32);
-      padding: clamp(30px, 6vw, 64px);
+      width: min(960px, 100%);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(139, 92, 246, 0.16);
+      border-radius: 36px;
+      box-shadow: 0 28px 90px rgba(76, 29, 149, 0.18);
+      padding: clamp(28px, 5vw, 58px);
       text-align: center;
       color: var(--ink);
     }
 
     .eyebrow {
       display: inline-flex;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       padding: 8px 14px;
       border-radius: 999px;
-      background: #eff6ff;
-      color: var(--blue-dark);
-      font-size: 0.85rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
+      background: #f3e8ff;
+      color: #6d28d9;
+      font-size: 0.82rem;
+      font-weight: 850;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     h1 {
-      max-width: 720px;
-      margin: 0 auto 34px;
-      font-size: clamp(2rem, 5vw, 3.75rem);
+      max-width: 780px;
+      margin: 0 auto 22px;
+      font-size: clamp(2rem, 5vw, 3.7rem);
       line-height: 1.04;
       letter-spacing: -0.05em;
       color: var(--ink);
     }
 
-    .score-card {
-      display: inline-grid;
-      gap: 4px;
-      min-width: 132px;
-      margin-bottom: 34px;
-      padding: 18px 28px;
-      border-radius: 22px;
-      background: #111827;
-      color: white;
-      box-shadow: 0 18px 32px rgba(17, 24, 39, 0.24);
+    .feedback-stage {
+      display: grid;
+      place-items: center;
+      min-height: 230px;
+      margin: 2px auto 20px;
     }
 
-    .score-label {
-      color: #cbd5e1;
-      font-size: 0.85rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .feedback-orb {
+      width: clamp(170px, 22vw, 240px);
+      height: clamp(170px, 22vw, 240px);
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255,255,255,0.95), rgba(255,255,255,0.18) 30%, transparent 34%),
+        linear-gradient(135deg, var(--state-soft), var(--state-color));
+      color: white;
+      box-shadow: 0 22px 44px rgba(var(--state-rgb), 0.28), inset 0 -12px 26px rgba(0,0,0,0.08);
+      transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .feedback-orb:hover { transform: translateY(-2px); }
+
+    .score-emoji {
+      display: block;
+      margin-bottom: 6px;
+      font-size: clamp(2.8rem, 7vw, 4.6rem);
+      line-height: 1;
     }
 
     #scoreValue {
-      font-size: 4.4rem;
-      line-height: 1;
+      display: block;
+      font-size: clamp(3.2rem, 8vw, 5.4rem);
+      line-height: 0.86;
+      font-weight: 900;
+      letter-spacing: -0.09em;
+      text-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .score-label {
+      margin-top: 10px;
+      color: #581c87;
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
       font-weight: 850;
-      letter-spacing: -0.08em;
+      letter-spacing: -0.035em;
     }
 
     .slider-wrap {
       display: grid;
       gap: 16px;
-      margin-top: 8px;
+      max-width: 760px;
+      margin: 0 auto;
     }
 
     .sr-only {
@@ -134,14 +165,14 @@
 
     input[type="range"] {
       width: 100%;
-      accent-color: var(--blue);
+      accent-color: var(--state-color);
       cursor: pointer;
     }
 
     input[type="range"]::-webkit-slider-runnable-track {
       height: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #dbeafe, var(--blue));
+      background: linear-gradient(90deg, #e9d5ff, var(--state-color));
     }
 
     input[type="range"]::-webkit-slider-thumb {
@@ -150,8 +181,8 @@
       margin-top: -11px;
       border: 4px solid white;
       border-radius: 50%;
-      background: var(--blue-dark);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+      background: var(--state-color);
+      box-shadow: 0 8px 20px rgba(var(--state-rgb), 0.34);
       -webkit-appearance: none;
       appearance: none;
     }
@@ -159,7 +190,7 @@
     input[type="range"]::-moz-range-track {
       height: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #dbeafe, var(--blue));
+      background: linear-gradient(90deg, #e9d5ff, var(--state-color));
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -167,21 +198,63 @@
       height: 28px;
       border: 4px solid white;
       border-radius: 50%;
-      background: var(--blue-dark);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+      background: var(--state-color);
+      box-shadow: 0 8px 20px rgba(var(--state-rgb), 0.34);
+    }
+
+    .visual-scale {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 4px;
+    }
+
+    .scale-item {
+      min-height: 82px;
+      padding: 10px 6px;
+      border: 0;
+      border-radius: 20px;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .scale-item .icon {
+      display: block;
+      margin-bottom: 6px;
+      font-size: clamp(1.6rem, 3vw, 2.25rem);
+      filter: grayscale(0.2);
+    }
+
+    .scale-item .name {
+      display: block;
+      font-size: clamp(0.7rem, 1.15vw, 0.9rem);
+      font-weight: 850;
+      letter-spacing: -0.015em;
+    }
+
+    .scale-item.active {
+      transform: translateY(-10px) scale(1.04);
+      background: white;
+      color: #581c87;
+      box-shadow: 0 14px 30px rgba(var(--state-rgb), 0.2);
     }
 
     .scale {
       display: flex;
       justify-content: space-between;
-      color: var(--muted);
+      color: #94a3b8;
       font-weight: 850;
     }
 
     .helper-text {
-      margin-top: 22px;
+      min-height: 1.4em;
+      margin-top: 16px;
       color: #475569;
-      font-size: 1.08rem;
+      font-size: clamp(1rem, 1.8vw, 1.28rem);
+      font-weight: 650;
     }
 
     .pdf-frame {
@@ -217,12 +290,22 @@
         <div class="eyebrow">Self-assessment</div>
         <h1>How strong do you feel your Discipleship strategy is?</h1>
 
-        <section class="score-card" aria-live="polite">
-          <span class="score-label">Your score</span>
-          <span id="scoreValue">3</span>
+        <section class="feedback-stage" aria-live="polite">
+          <div class="feedback-orb">
+            <span class="score-emoji" id="scoreEmoji">🧭</span>
+            <span id="scoreValue">3</span>
+          </div>
+          <p class="score-label" id="scoreLabel">Aligned</p>
         </section>
 
         <div class="slider-wrap">
+          <div class="visual-scale" aria-hidden="true">
+            <button class="scale-item" type="button" data-score="1"><span class="icon">🌫️</span><span class="name">Unclear</span></button>
+            <button class="scale-item" type="button" data-score="2"><span class="icon">🌱</span><span class="name">Emerging</span></button>
+            <button class="scale-item active" type="button" data-score="3"><span class="icon">🧭</span><span class="name">Aligned</span></button>
+            <button class="scale-item" type="button" data-score="4"><span class="icon">🤝</span><span class="name">Intentional</span></button>
+            <button class="scale-item" type="button" data-score="5"><span class="icon">🌳</span><span class="name">Multiplying</span></button>
+          </div>
           <label class="sr-only" for="discipleshipScore">Discipleship strategy strength from 1 to 5</label>
           <input id="discipleshipScore" type="range" min="1" max="5" step="1" value="3" />
           <div class="scale" aria-hidden="true">
@@ -230,7 +313,7 @@
           </div>
         </div>
 
-        <p class="helper-text" id="helperText">Move the slider to rate your current strategy.</p>
+        <p class="helper-text" id="helperText">The pieces are there. The path needs to feel clearer and more repeatable.</p>
       </main>
     </section>
   </div>
@@ -288,6 +371,7 @@
     function prevSlide() { goToSlide(currentSlide - 1); }
 
     window.addEventListener('keydown', (event) => {
+      if (event.target === slider) return;
       if (event.key === 'ArrowRight') {
         event.preventDefault();
         nextSlide();
@@ -300,20 +384,37 @@
 
     const slider = document.querySelector('#discipleshipScore');
     const scoreValue = document.querySelector('#scoreValue');
+    const scoreEmoji = document.querySelector('#scoreEmoji');
+    const scoreLabel = document.querySelector('#scoreLabel');
     const helperText = document.querySelector('#helperText');
+    const scaleItems = Array.from(document.querySelectorAll('.scale-item'));
 
-    const labels = {
-      1: 'Needs significant attention.',
-      2: 'Some pieces are present, but gaps remain.',
-      3: 'Moderately strong with room to grow.',
-      4: 'Strong and mostly intentional.',
-      5: 'Very strong, clear, and repeatable.'
+    const scoreStates = {
+      1: { icon: '🌫️', label: 'Unclear', helper: 'The pathway is hard to see.', color: '#a855f7', soft: '#ddd6fe', rgb: '168, 85, 247' },
+      2: { icon: '🌱', label: 'Emerging', helper: 'Some good pieces are beginning to take root.', color: '#8b5cf6', soft: '#c4b5fd', rgb: '139, 92, 246' },
+      3: { icon: '🧭', label: 'Aligned', helper: 'The pieces are there. The path needs to feel clearer and more repeatable.', color: '#7c3aed', soft: '#c4b5fd', rgb: '124, 58, 237' },
+      4: { icon: '🤝', label: 'Intentional', helper: 'The path is clear enough for people to follow and leaders to reinforce.', color: '#6d28d9', soft: '#a78bfa', rgb: '109, 40, 217' },
+      5: { icon: '🌳', label: 'Multiplying', helper: 'The strategy is simple, shared, and able to reproduce through leaders.', color: '#5b21b6', soft: '#8b5cf6', rgb: '91, 33, 182' }
     };
 
     function updateScore() {
+      const state = scoreStates[slider.value];
+      document.documentElement.style.setProperty('--state-color', state.color);
+      document.documentElement.style.setProperty('--state-soft', state.soft);
+      document.documentElement.style.setProperty('--state-rgb', state.rgb);
       scoreValue.textContent = slider.value;
-      helperText.textContent = labels[slider.value];
+      scoreEmoji.textContent = state.icon;
+      scoreLabel.textContent = state.label;
+      helperText.textContent = state.helper;
+      scaleItems.forEach((item) => item.classList.toggle('active', item.dataset.score === slider.value));
     }
+
+    scaleItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        slider.value = item.dataset.score;
+        updateScore();
+      });
+    });
 
     slider.addEventListener('input', updateScore);
     updateScore();
