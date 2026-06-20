@@ -3,84 +3,114 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Discipleship Strategy Slider</title>
+  <title>Grow Presentation</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(255, 255, 255, 0.94);
+      --ink: #111827;
+      --muted: #64748b;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --chrome: rgba(15, 23, 42, 0.76);
     }
+
+    html, body { height: 100%; }
 
     body {
       min-height: 100vh;
-      display: grid;
-      place-items: center;
+      overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #1f2937;
+      color: white;
       background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 34rem),
-        linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-      padding: 24px;
+        radial-gradient(circle at 12% 0%, rgba(59, 130, 246, 0.24), transparent 34rem),
+        radial-gradient(circle at 92% 12%, rgba(168, 85, 247, 0.18), transparent 28rem),
+        var(--bg);
     }
 
-    main {
-      width: min(720px, 100%);
-      background: rgba(255, 255, 255, 0.9);
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      padding: clamp(14px, 2vw, 28px);
+    }
+
+    .slide {
+      position: absolute;
+      inset: clamp(14px, 2vw, 28px);
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateX(22px) scale(0.992);
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .slider-slide main {
+      width: min(860px, 100%);
+      background: var(--panel);
       border: 1px solid rgba(148, 163, 184, 0.28);
-      border-radius: 28px;
-      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
-      padding: clamp(28px, 6vw, 56px);
+      border-radius: 30px;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.32);
+      padding: clamp(30px, 6vw, 64px);
       text-align: center;
+      color: var(--ink);
     }
 
     .eyebrow {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
       margin-bottom: 18px;
       padding: 8px 14px;
       border-radius: 999px;
       background: #eff6ff;
-      color: #1d4ed8;
+      color: var(--blue-dark);
       font-size: 0.85rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
     h1 {
-      max-width: 620px;
+      max-width: 720px;
       margin: 0 auto 34px;
-      font-size: clamp(2rem, 5vw, 3.45rem);
+      font-size: clamp(2rem, 5vw, 3.75rem);
       line-height: 1.04;
-      letter-spacing: -0.045em;
-      color: #111827;
+      letter-spacing: -0.05em;
+      color: var(--ink);
     }
 
     .score-card {
       display: inline-grid;
       gap: 4px;
-      min-width: 128px;
+      min-width: 132px;
       margin-bottom: 34px;
-      padding: 18px 26px;
+      padding: 18px 28px;
       border-radius: 22px;
       background: #111827;
       color: white;
-      box-shadow: 0 18px 32px rgba(17, 24, 39, 0.22);
+      box-shadow: 0 18px 32px rgba(17, 24, 39, 0.24);
     }
 
     .score-label {
       color: #cbd5e1;
       font-size: 0.85rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
     #scoreValue {
-      font-size: 4rem;
+      font-size: 4.4rem;
       line-height: 1;
-      font-weight: 800;
+      font-weight: 850;
       letter-spacing: -0.08em;
     }
 
@@ -104,14 +134,14 @@
 
     input[type="range"] {
       width: 100%;
-      accent-color: #2563eb;
+      accent-color: var(--blue);
       cursor: pointer;
     }
 
     input[type="range"]::-webkit-slider-runnable-track {
       height: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #dbeafe, #2563eb);
+      background: linear-gradient(90deg, #dbeafe, var(--blue));
     }
 
     input[type="range"]::-webkit-slider-thumb {
@@ -120,7 +150,7 @@
       margin-top: -11px;
       border: 4px solid white;
       border-radius: 50%;
-      background: #1d4ed8;
+      background: var(--blue-dark);
       box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
       -webkit-appearance: none;
       appearance: none;
@@ -129,7 +159,7 @@
     input[type="range"]::-moz-range-track {
       height: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #dbeafe, #2563eb);
+      background: linear-gradient(90deg, #dbeafe, var(--blue));
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -137,50 +167,258 @@
       height: 28px;
       border: 4px solid white;
       border-radius: 50%;
-      background: #1d4ed8;
+      background: var(--blue-dark);
       box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
     }
 
     .scale {
       display: flex;
       justify-content: space-between;
-      color: #64748b;
-      font-weight: 800;
+      color: var(--muted);
+      font-weight: 850;
     }
 
     .helper-text {
       margin-top: 22px;
       color: #475569;
-      font-size: 1.05rem;
+      font-size: 1.08rem;
+    }
+
+    .pdf-frame {
+      width: min(100%, calc((100vh - 120px) * 16 / 9));
+      max-height: calc(100vh - 92px);
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #111827;
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    .pdf-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #111827;
+    }
+
+    .nav-button {
+      position: fixed;
+      top: 50%;
+      z-index: 20;
+      width: 54px;
+      height: 74px;
+      transform: translateY(-50%);
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      color: white;
+      background: var(--chrome);
+      font-size: 2.4rem;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
+    }
+
+    .nav-button:hover { background: rgba(37, 99, 235, 0.86); }
+    .nav-button:active { transform: translateY(-50%) scale(0.96); }
+    .nav-button[disabled] { opacity: 0.28; cursor: not-allowed; }
+    .nav-button.prev { left: 18px; }
+    .nav-button.next { right: 18px; }
+
+    .status-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      z-index: 21;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      background: var(--chrome);
+      color: rgba(255,255,255,0.92);
+      font-size: 0.92rem;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+      user-select: none;
+    }
+
+    .progress-track {
+      width: min(220px, 34vw);
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.22);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: #60a5fa;
+      transition: width 180ms ease;
+    }
+
+    .hint {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      z-index: 21;
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.52);
+      color: rgba(255,255,255,0.8);
+      font-size: 0.84rem;
+      backdrop-filter: blur(14px);
+    }
+
+    @media (max-width: 760px) {
+      .nav-button { width: 44px; height: 58px; font-size: 1.8rem; }
+      .nav-button.prev { left: 8px; }
+      .nav-button.next { right: 8px; }
+      .slide { inset: 12px; }
+      .pdf-frame { width: calc(100vw - 28px); max-height: calc(100vh - 104px); }
+      .hint { display: none; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <div class="eyebrow">Self-assessment</div>
-    <h1>How strong do you feel your Discipleship strategy is?</h1>
+  <div class="deck" id="deck" aria-live="polite">
+    <section class="slide slider-slide active" data-title="Discipleship Strategy Slider">
+      <main>
+        <div class="eyebrow">Self-assessment</div>
+        <h1>How strong do you feel your Discipleship strategy is?</h1>
 
-    <section class="score-card" aria-live="polite">
-      <span class="score-label">Your score</span>
-      <span id="scoreValue">3</span>
+        <section class="score-card" aria-live="polite">
+          <span class="score-label">Your score</span>
+          <span id="scoreValue">3</span>
+        </section>
+
+        <div class="slider-wrap">
+          <label class="sr-only" for="discipleshipScore">Discipleship strategy strength from 1 to 5</label>
+          <input id="discipleshipScore" type="range" min="1" max="5" step="1" value="3" />
+          <div class="scale" aria-hidden="true">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          </div>
+        </div>
+
+        <p class="helper-text" id="helperText">Move the slider to rate your current strategy.</p>
+      </main>
     </section>
+  </div>
 
-    <div class="slider-wrap">
-      <label class="sr-only" for="discipleshipScore">Discipleship strategy strength from 1 to 5</label>
-      <input id="discipleshipScore" type="range" min="1" max="5" step="1" value="3" />
-      <div class="scale" aria-hidden="true">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>5</span>
-      </div>
-    </div>
+  <p class="hint">Use ← / → arrow keys or the side buttons</p>
+  <button class="nav-button prev" id="prevButton" type="button" aria-label="Previous slide">‹</button>
+  <button class="nav-button next" id="nextButton" type="button" aria-label="Next slide">›</button>
 
-    <p class="helper-text" id="helperText">Move the slider to rate your current strategy.</p>
-  </main>
+  <div class="status-bar" aria-hidden="true">
+    <span id="slideCount">1 / 35</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
 
   <script>
+    const pdfSlides = [
+      "page-001.webp", "page-002.webp", "page-003.webp", "page-004.webp", "page-005.webp",
+      "page-006.webp", "page-007.webp", "page-008.webp", "page-009.webp", "page-010.webp",
+      "page-011.webp", "page-012.webp", "page-013.webp", "page-014.webp", "page-015.webp",
+      "page-016.webp", "page-017.webp", "page-018.webp", "page-019.webp", "page-020.webp",
+      "page-021.webp", "page-022.webp", "page-023.webp", "page-024.webp", "page-025.webp",
+      "page-026.webp", "page-027.webp", "page-028.webp", "page-029.webp", "page-030.webp",
+      "page-031.webp", "page-032.webp", "page-033.webp", "page-034.webp"
+    ];
+
+    const deck = document.querySelector('#deck');
+    const prevButton = document.querySelector('#prevButton');
+    const nextButton = document.querySelector('#nextButton');
+    const slideCount = document.querySelector('#slideCount');
+    const progressFill = document.querySelector('#progressFill');
+
+    pdfSlides.forEach((file, index) => {
+      const section = document.createElement('section');
+      section.className = 'slide pdf-slide';
+      section.dataset.title = `PDF slide ${index + 1}`;
+      section.innerHTML = `
+        <figure class="pdf-frame">
+          <img src="assets/slides/${file}" alt="Webinar slide ${index + 1}" loading="lazy" decoding="async" />
+        </figure>
+      `;
+      deck.appendChild(section);
+    });
+
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let currentSlide = 0;
+
+    function updateDeck() {
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+        slide.setAttribute('aria-hidden', index === currentSlide ? 'false' : 'true');
+      });
+
+      prevButton.disabled = currentSlide === 0;
+      nextButton.disabled = currentSlide === slides.length - 1;
+      slideCount.textContent = `${currentSlide + 1} / ${slides.length}`;
+      progressFill.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+
+      // Preload the next slide image to keep navigation smooth.
+      [currentSlide + 1, currentSlide - 1].forEach((index) => {
+        const img = slides[index]?.querySelector('img');
+        if (img) {
+          const preload = new Image();
+          preload.src = img.src;
+        }
+      });
+    }
+
+    function goToSlide(index) {
+      currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+      updateDeck();
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    prevButton.addEventListener('click', prevSlide);
+    nextButton.addEventListener('click', nextSlide);
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        nextSlide();
+      }
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+        event.preventDefault();
+        prevSlide();
+      }
+      if (event.key === 'Home') {
+        event.preventDefault();
+        goToSlide(0);
+      }
+      if (event.key === 'End') {
+        event.preventDefault();
+        goToSlide(slides.length - 1);
+      }
+    });
+
+    let touchStartX = null;
+    window.addEventListener('touchstart', (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (event) => {
+      if (touchStartX === null) return;
+      const delta = event.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(delta) > 60) delta < 0 ? nextSlide() : prevSlide();
+      touchStartX = null;
+    }, { passive: true });
+
     const slider = document.querySelector('#discipleshipScore');
     const scoreValue = document.querySelector('#scoreValue');
     const helperText = document.querySelector('#helperText');
@@ -200,6 +438,7 @@
 
     slider.addEventListener('input', updateScore);
     updateScore();
+    updateDeck();
   </script>
 </body>
 </html>
