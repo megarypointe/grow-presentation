@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Discipleship Strategy Slider</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1f2937;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 34rem),
+        linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+      padding: 24px;
+    }
+
+    main {
+      width: min(720px, 100%);
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
+      padding: clamp(28px, 6vw, 56px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 620px;
+      margin: 0 auto 34px;
+      font-size: clamp(2rem, 5vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      color: #111827;
+    }
+
+    .score-card {
+      display: inline-grid;
+      gap: 4px;
+      min-width: 128px;
+      margin-bottom: 34px;
+      padding: 18px 26px;
+      border-radius: 22px;
+      background: #111827;
+      color: white;
+      box-shadow: 0 18px 32px rgba(17, 24, 39, 0.22);
+    }
+
+    .score-label {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #scoreValue {
+      font-size: 4rem;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.08em;
+    }
+
+    .slider-wrap {
+      display: grid;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #2563eb;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #dbeafe, #2563eb);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 34px;
+      height: 34px;
+      margin-top: -11px;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: #1d4ed8;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #dbeafe, #2563eb);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 28px;
+      height: 28px;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: #1d4ed8;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+    }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-weight: 800;
+    }
+
+    .helper-text {
+      margin-top: 22px;
+      color: #475569;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Self-assessment</div>
+    <h1>How strong do you feel your Discipleship strategy is?</h1>
+
+    <section class="score-card" aria-live="polite">
+      <span class="score-label">Your score</span>
+      <span id="scoreValue">3</span>
+    </section>
+
+    <div class="slider-wrap">
+      <label class="sr-only" for="discipleshipScore">Discipleship strategy strength from 1 to 5</label>
+      <input id="discipleshipScore" type="range" min="1" max="5" step="1" value="3" />
+      <div class="scale" aria-hidden="true">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+      </div>
+    </div>
+
+    <p class="helper-text" id="helperText">Move the slider to rate your current strategy.</p>
+  </main>
+
+  <script>
+    const slider = document.querySelector('#discipleshipScore');
+    const scoreValue = document.querySelector('#scoreValue');
+    const helperText = document.querySelector('#helperText');
+
+    const labels = {
+      1: 'Needs significant attention.',
+      2: 'Some pieces are present, but gaps remain.',
+      3: 'Moderately strong with room to grow.',
+      4: 'Strong and mostly intentional.',
+      5: 'Very strong, clear, and repeatable.'
+    };
+
+    function updateScore() {
+      scoreValue.textContent = slider.value;
+      helperText.textContent = labels[slider.value];
+    }
+
+    slider.addEventListener('input', updateScore);
+    updateScore();
+  </script>
+</body>
+</html>
