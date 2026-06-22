@@ -39,6 +39,21 @@ test('editor cards show only slide thumbnails with no leftover text space', () =
   assert.doesNotMatch(html, /flex:\s*1 1 220px|max-width:\s*320px|min-height:\s*218px/);
 });
 
+test('slider cards show the question text instead of generic slider text', () => {
+  assert.match(html, /slide-card-question/);
+  assert.match(html, /definition\.kind === 'custom-slider'[\s\S]*definition\.question/);
+  assert.doesNotMatch(html, /<div class="slide-card-placeholder">Slider<\/div>/);
+});
+
+test('cards have contextual menus for edit and delete', () => {
+  assert.match(html, /card-menu-button/);
+  assert.match(html, /data-card-action="delete"/);
+  assert.match(html, /data-card-action="edit"/);
+  assert.match(html, /function toggleCardMenu\(/);
+  assert.match(html, /function deleteSlide\(/);
+  assert.match(html, /function editSlider\(/);
+});
+
 test('open presentation control is discreet and page description is removed', () => {
   assert.match(html, /id="exitEditorButton"[^>]*class="editor-link"/);
   assert.doesNotMatch(html, /id="exitEditorButton"[^>]*class="[^"]*primary/);
@@ -60,10 +75,14 @@ test('editor can add slider-question slides from a hidden panel', () => {
   assert.match(html, /id="sliderQuestionInput"/);
   assert.match(html, /id="sliderMinInput"/);
   assert.match(html, /id="sliderMaxInput"/);
+  assert.match(html, /id="sliderLabelsInput"/);
   assert.match(html, /class="editor-tool tool-panel"/);
   assert.match(html, /CUSTOM_SLIDES_STORAGE_KEY/);
   assert.match(html, /function createSliderSlide\(/);
+  assert.match(html, /function parseSliderLabels\(/);
+  assert.match(html, /function formatSliderLabels\(/);
   assert.match(html, /kind:\s*'custom-slider'/);
+  assert.match(html, /definition\.labels/);
 });
 
 test('editor can add image, video, and PDF slides from a hidden panel', () => {
@@ -75,6 +94,10 @@ test('editor can add image, video, and PDF slides from a hidden panel', () => {
   assert.match(html, /kind:\s*`media-\$\{mediaType\}`/);
   assert.match(html, /<video[\s\S]*controls/);
   assert.match(html, /<iframe[\s\S]*application\/pdf/);
+});
+
+test('presentation page does not show a presentation editor button', () => {
+  assert.doesNotMatch(html, /id="openEditorButton"|>Presentation Editor<\/button>/);
 });
 
 test('deck navigation uses the reordered slide list', () => {
