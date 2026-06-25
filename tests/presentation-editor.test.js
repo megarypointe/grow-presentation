@@ -116,6 +116,19 @@ test('presentation page does not show a presentation editor button', () => {
   assert.doesNotMatch(html, /id="openEditorButton"|>Presentation Editor<\/button>/);
 });
 
+
+
+test('deleted built-in slides are persisted instead of reappearing at the end', () => {
+  assert.match(html, /DELETED_SLIDES_STORAGE_KEY/);
+  assert.match(html, /function loadDeletedSlideIds\(/);
+  assert.match(html, /function saveDeletedSlideIds\(/);
+  assert.match(html, /let deletedSlideIds = loadDeletedSlideIds\(\)/);
+  assert.match(html, /filter\(\(slide\) => !deletedSlideIds\.includes\(slide\.id\)\)/);
+  assert.match(html, /deletedSlideIds\.push\(slideId\)/);
+  assert.match(html, /saveDeletedSlideIds\(\)/);
+  assert.match(html, /slideElementsById\.get\(slideId\)\?\.remove\(\)/);
+});
+
 test('deck navigation uses the reordered slide list', () => {
   assert.match(html, /let slides = \[\]/);
   assert.match(html, /function applySlideOrder\(/);
