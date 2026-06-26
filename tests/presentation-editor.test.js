@@ -66,14 +66,14 @@ test('deck starts with the first PDF slide and omits the original discipleship s
 });
 
 test('open presentation control is discreet and page description is removed', () => {
-  assert.match(html, /id="exitEditorButton"[^>]*class="editor-link"/);
+  assert.match(html, /id="exitEditorButton"[^>]*class="[^"]*editor-link/);
   assert.doesNotMatch(html, /id="exitEditorButton"[^>]*class="[^"]*primary/);
   assert.doesNotMatch(html, /Drag a card between slides to choose exactly where it will land\./);
 });
 
 test('editor has a plus menu next to the title for adding slides', () => {
   assert.match(html, /id="addMenuButton"/);
-  assert.match(html, /aria-label="Add slide"/);
+  assert.match(html, /aria-label="Add slide to active presentation"/);
   assert.match(html, /id="addMenu"/);
   assert.match(html, /data-tool="slider"[\s\S]*Add Slider/);
   assert.match(html, /data-tool="media"[\s\S]*Add Slide/);
@@ -121,7 +121,7 @@ test('presentation page does not show a presentation editor button', () => {
 test('presentations can be managed and multiple decks can be created', () => {
   assert.match(html, /id="presentationManager"/);
   assert.match(html, />Presentation Library</);
-  assert.match(html, /Choose a deck first, then edit its slides/);
+  assert.match(html, /Each presentation has its own slide order, custom slides, and removed slides/);
   assert.match(html, /id="activePresentationTitle"/);
   assert.match(html, /id="presentationList"/);
   assert.match(html, /id="newPresentationButton"/);
@@ -143,11 +143,32 @@ test('presentation manager follows the UX checklist for hierarchy and clear deck
   assert.match(html, /class="presentation-card-title"/);
   assert.match(html, /class="presentation-card-meta"/);
   assert.match(html, /class="presentation-card-status"/);
+  assert.match(html, /Currently editing/);
+  assert.match(html, /Switch deck/);
   assert.match(html, /data-presentation-action="select"/);
   assert.match(html, /function getPresentationSlideCount\(/);
   assert.match(html, /function updateActivePresentationTitle\(/);
   assert.match(html, /function toggleCreatePresentationForm\(/);
   assert.doesNotMatch(html, /class="presentation-chip/);
+});
+
+
+test('editor checklist avoids ambiguous actions and confusing copy', () => {
+  assert.match(html, /class="editor-link present-button"[\s\S]*>Present<\/button>|>Back to Presentation<\/button>/);
+  assert.doesNotMatch(html, />Open Presentation<\/button>/);
+  assert.match(html, /id="addMenuButton"[\s\S]*>\s*<span[^>]*>\+<\/span>\s*Add Slide\s*<\/button>/);
+  assert.match(html, /aria-label="Add slide to active presentation"/);
+  assert.doesNotMatch(html, /custom\s+slides,\s+and\s+deletes/);
+  assert.match(html, /Each presentation has its own slide order, custom slides, and removed slides/);
+});
+
+test('presentation library keeps deck cards visible in the first working area', () => {
+  assert.match(html, /class="presentation-manager library-layout"/);
+  assert.match(html, /class="library-main"/);
+  assert.match(html, /class="library-actions"/);
+  assert.match(html, /class="presentation-list"/);
+  assert.match(html, /grid-template-columns:\s*repeat\(auto-fit, minmax\(190px, 1fr\)\)/);
+  assert.doesNotMatch(html, /min-height:\s*118px/);
 });
 
 test('presentation-specific slide edits are isolated by active presentation', () => {
