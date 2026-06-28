@@ -70,7 +70,8 @@
       pointer-events: auto;
     }
 
-    .slider-slide main {
+    .slider-slide main,
+    .buttons-slide main {
       width: min(860px, 100%);
       background: var(--panel);
       border: 1px solid rgba(148, 163, 184, 0.28);
@@ -134,6 +135,38 @@
       display: grid;
       gap: 16px;
       margin-top: 8px;
+    }
+
+    .button-choice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .choice-button {
+      border: 1px solid rgba(37, 99, 235, 0.24);
+      border-radius: 999px;
+      padding: 14px 20px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 850;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.14);
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .choice-button[aria-pressed="true"] {
+      background: #1d4ed8;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .choice-button:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.38);
+      outline-offset: 3px;
     }
 
     .sr-only {
@@ -938,7 +971,9 @@
     .tool-row input,
     .tool-row select,
     .editor-tool input[type="text"],
+    .editor-tool input[type="number"],
     .editor-tool input[type="file"],
+    .editor-tool select,
     .editor-tool textarea {
       min-width: 0;
       width: 100%;
@@ -962,6 +997,19 @@
     .tool-row input[type="number"] {
       width: 74px;
       flex: 0 0 74px;
+    }
+
+    .button-choice-fields {
+      display: grid;
+      gap: 8px;
+    }
+
+    .button-choice-fields label {
+      display: grid;
+      gap: 5px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 750;
     }
 
     .tool-button {
@@ -1242,6 +1290,7 @@
             <button id="addMenuButton" class="add-menu-button" type="button" aria-label="Add slide to active presentation" aria-expanded="false" aria-controls="addMenu"><span aria-hidden="true">+</span> Add Slide</button>
             <div class="add-menu" id="addMenu" hidden>
               <button class="add-menu-option" type="button" data-tool="slider">Add Slider</button>
+              <button class="add-menu-option" type="button" data-tool="buttons">Add Buttons</button>
               <button class="add-menu-option" type="button" data-tool="media">Add Slide</button>
             </div>
           </div>
@@ -1256,6 +1305,16 @@
               <button class="tool-button" type="submit">Add Slider</button>
             </div>
             <div id="sliderLabelFields" class="slider-label-fields" data-slider-label-fields aria-label="Slider number descriptions"></div>
+          </form>
+          <form class="editor-tool tool-panel" id="addButtonsForm" hidden>
+            <h3>Add buttons</h3>
+            <input id="buttonsQuestionInput" type="text" placeholder="Click all that apply:" aria-label="Button slide question" required />
+            <div class="tool-row">
+              <label class="tool-inline-label"><span>Number of buttons</span><input id="buttonChoiceCountInput" type="number" value="3" min="1" max="12" aria-label="Number of buttons" /></label>
+              <button class="tool-button" type="button" id="updateButtonChoiceCountButton">Apply Count</button>
+              <button class="tool-button" type="submit">Add Button Slide</button>
+            </div>
+            <div id="buttonChoiceFields" class="button-choice-fields" aria-label="Button labels"></div>
           </form>
           <form class="editor-tool tool-panel" id="addMediaForm" hidden>
             <h3>Add media slide</h3>
@@ -1344,6 +1403,11 @@
     const sliderMinInput = document.querySelector('#sliderMinInput');
     const sliderMaxInput = document.querySelector('#sliderMaxInput');
     const sliderLabelFields = document.querySelector('#sliderLabelFields');
+    const addButtonsForm = document.querySelector('#addButtonsForm');
+    const buttonsQuestionInput = document.querySelector('#buttonsQuestionInput');
+    const buttonChoiceCountInput = document.querySelector('#buttonChoiceCountInput');
+    const updateButtonChoiceCountButton = document.querySelector('#updateButtonChoiceCountButton');
+    const buttonChoiceFields = document.querySelector('#buttonChoiceFields');
     const addMediaForm = document.querySelector('#addMediaForm');
     const mediaFileInput = document.querySelector('#mediaFileInput');
     let defaultSlideOrder = [];
@@ -1356,7 +1420,7 @@
 
     function buildSlideElement(definition, index) {
       const section = document.createElement('section');
-      section.className = `slide ${definition.kind === 'custom-slider' ? 'slider-slide' : 'pdf-slide'}`;
+      section.className = `slide ${definition.kind === 'custom-slider' ? 'slider-slide' : definition.kind === 'custom-buttons' ? 'buttons-slide' : 'pdf-slide'}`;
       section.dataset.slideId = definition.id;
       section.dataset.title = definition.title || `Slide ${index + 1}`;
 
@@ -1394,6 +1458,29 @@
         input.addEventListener('input', () => {
           score.textContent = input.value;
           helper.textContent = definition.labels?.[input.value] || '';
+        });
+      }
+
+      if (definition.kind === 'custom-buttons') {
+        const buttonChoices = (definition.choices || []).map(normalizeButtonChoice);
+        section.innerHTML = `
+          <main>
+            <div class="eyebrow">Choose all that apply</div>
+            <h1>${escapeAttribute(definition.question)}</h1>
+            <div class="button-choice-grid">
+              ${buttonChoices.map((choice, choiceIndex) => `
+                <button class="choice-button" type="button" aria-pressed="false" data-choice-index="${choiceIndex}" data-target-slide-id="${escapeAttribute(choice.targetSlideId || '')}">${escapeAttribute(choice.label)}</button>
+              `).join('')}
+            </div>
+          </main>
+        `;
+        section.querySelectorAll('.choice-button').forEach((button) => {
+          button.addEventListener('click', () => {
+            const nextPressed = button.getAttribute('aria-pressed') !== 'true';
+            const targetSlideId = button.dataset.targetSlideId;
+            button.setAttribute('aria-pressed', nextPressed ? 'true' : 'false');
+            if (targetSlideId) goToSlideId(targetSlideId);
+          });
         });
       }
 
@@ -2010,6 +2097,71 @@
       renderSliderLabelFields(labels);
     }
 
+    function getButtonChoiceCount() {
+      const count = Number(buttonChoiceCountInput.value);
+      return Math.max(1, Math.min(12, Number.isFinite(count) ? Math.round(count) : 3));
+    }
+
+    function normalizeButtonChoice(choice, index = 0) {
+      if (typeof choice === 'string') {
+        return { label: choice.trim() || `Button ${index + 1}`, targetSlideId: '' };
+      }
+      return {
+        label: choice?.label?.trim() || `Button ${index + 1}`,
+        targetSlideId: slideDefinitions.some((slide) => slide.id === choice?.targetSlideId) ? choice.targetSlideId : ''
+      };
+    }
+
+    function getButtonChoiceLabel(choice, index = 0) {
+      return normalizeButtonChoice(choice, index).label;
+    }
+
+    function getSlidePathOptions(selectedSlideId = '') {
+      return [
+        '<option value="">Continue normally</option>',
+        ...slideOrder.map((slideId, index) => {
+          const definition = slideDefinitions.find((slide) => slide.id === slideId);
+          const label = definition?.title || definition?.question || `Slide ${index + 1}`;
+          const selected = slideId === selectedSlideId ? ' selected' : '';
+          return `<option value="${escapeAttribute(slideId)}"${selected}>Go to ${index + 1}: ${escapeAttribute(label)}</option>`;
+        })
+      ].join('');
+    }
+
+    function renderButtonChoiceFields(choices = collectButtonChoices()) {
+      const count = getButtonChoiceCount();
+      const normalizedChoices = choices.map(normalizeButtonChoice);
+      buttonChoiceFields.innerHTML = Array.from({ length: count }, (_, index) => {
+        const choice = normalizeButtonChoice(normalizedChoices[index], index);
+        return `
+          <label>
+            Button ${index + 1}
+            <input type="text" data-button-choice-index="${index}" value="${escapeAttribute(choice.label)}" placeholder="Button ${index + 1}" />
+          </label>
+          <label>
+            Path after Button ${index + 1}
+            <select data-button-target-index="${index}" aria-label="Path after button ${index + 1}">${getSlidePathOptions(choice.targetSlideId)}</select>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function collectButtonChoices() {
+      return [...buttonChoiceFields.querySelectorAll('[data-button-choice-index]')]
+        .map((input, index) => {
+          const targetSelect = buttonChoiceFields.querySelector(`[data-button-target-index="${index}"]`);
+          return {
+            label: input.value.trim() || `Button ${index + 1}`,
+            targetSlideId: targetSelect?.value || ''
+          };
+        });
+    }
+
+    function populateButtonChoiceFields(choices = []) {
+      buttonChoiceCountInput.value = String(Math.max(1, Math.min(12, choices.length || 3)));
+      renderButtonChoiceFields(choices);
+    }
+
     function createSliderSlide(question, min, max, labels = {}) {
       const safeMin = Number.isFinite(min) ? min : 1;
       const safeMax = Number.isFinite(max) && max > safeMin ? max : safeMin + 4;
@@ -2044,6 +2196,46 @@
       slideElementsById.set(slideId, newElement);
       renderEditorCards();
       applySlideOrder(slideId);
+    }
+
+    function replaceSlideElement(slideId) {
+      const definition = slideDefinitions.find((slide) => slide.id === slideId);
+      if (!definition) return;
+      const oldElement = slideElementsById.get(slideId);
+      const newElement = buildSlideElement(definition, slideDefinitions.findIndex((slide) => slide.id === slideId));
+      oldElement?.replaceWith(newElement);
+      slideElementsById.set(slideId, newElement);
+      renderEditorCards();
+      applySlideOrder(slideId);
+    }
+
+    function createButtonsSlide(question, choices = []) {
+      const safeQuestion = question.trim() || 'Click all that apply:';
+      const safeChoices = choices.map(normalizeButtonChoice).slice(0, 12);
+      const definition = {
+        id: `custom-buttons-${Date.now()}`,
+        title: safeQuestion,
+        question: safeQuestion,
+        choices: safeChoices.length ? safeChoices : [
+          { label: 'Button 1', targetSlideId: '' },
+          { label: 'Button 2', targetSlideId: '' },
+          { label: 'Button 3', targetSlideId: '' }
+        ],
+        kind: 'custom-buttons'
+      };
+      registerCustomSlide(definition);
+    }
+
+    function updateButtonsSlide(slideId, question, choices = []) {
+      const definition = slideDefinitions.find((slide) => slide.id === slideId);
+      if (!definition) return;
+      definition.title = question;
+      definition.question = question;
+      definition.choices = choices.map(normalizeButtonChoice).slice(0, 12);
+      if (customSlides.some((slide) => slide.id === slideId)) {
+        saveCustomSlides();
+      }
+      replaceSlideElement(slideId);
     }
 
     function getMediaKind(file) {
@@ -2145,7 +2337,7 @@
         card.draggable = true;
         card.setAttribute('draggable', 'true');
         card.dataset.slideId = slideId;
-        const canEdit = definition.kind === 'custom-slider';
+        const canEdit = definition.kind === 'custom-slider' || definition.kind === 'custom-buttons';
         const canDelete = true;
         card.innerHTML = `
           <div class="slide-card-preview">
@@ -2159,7 +2351,7 @@
                     ? '<div class="slide-card-placeholder">PDF</div>'
                     : definition.kind === 'media-embed'
                       ? '<div class="slide-card-placeholder">File</div>'
-                      : definition.kind === 'custom-slider'
+                      : definition.kind === 'custom-slider' || definition.kind === 'custom-buttons'
                       ? `<div class="slide-card-question">${definition.question}</div>`
                       : '<div class="slide-card-placeholder">Slide</div>'}
           </div>
@@ -2204,7 +2396,7 @@
           toggleCardMenu(card);
         });
         card.querySelector('[data-card-action="delete"]')?.addEventListener('click', () => deleteSlide(slideId));
-        card.querySelector('[data-card-action="edit"]')?.addEventListener('click', () => editSlider(slideId));
+        card.querySelector('[data-card-action="edit"]')?.addEventListener('click', () => editCustomSlide(slideId));
 
         editorGrid.appendChild(card);
       });
@@ -2244,16 +2436,29 @@
       applySlideOrder(slideOrder[Math.min(currentSlide, slideOrder.length - 1)]);
     }
 
-    function editSlider(slideId) {
+    function editCustomSlide(slideId) {
       const definition = slideDefinitions.find((slide) => slide.id === slideId);
       if (!definition) return;
-      showToolPanel('slider');
-      addSliderForm.dataset.editingSlideId = slideId;
-      addSliderForm.querySelector('.tool-button').textContent = 'Save Slider';
-      sliderQuestionInput.value = definition.question;
-      sliderMinInput.value = definition.min;
-      sliderMaxInput.value = definition.max;
-      populateSliderLabelFields(definition.labels);
+      if (definition.kind === 'custom-slider') {
+        showToolPanel('slider');
+        addSliderForm.dataset.editingSlideId = slideId;
+        addSliderForm.querySelector('.tool-button').textContent = 'Save Slider';
+        sliderQuestionInput.value = definition.question;
+        sliderMinInput.value = definition.min;
+        sliderMaxInput.value = definition.max;
+        populateSliderLabelFields(definition.labels);
+      }
+      if (definition.kind === 'custom-buttons') {
+        showToolPanel('buttons');
+        addButtonsForm.dataset.editingSlideId = slideId;
+        addButtonsForm.querySelector('button[type="submit"]').textContent = 'Save Button Slide';
+        buttonsQuestionInput.value = definition.question;
+        populateButtonChoiceFields(definition.choices || []);
+      }
+    }
+
+    function editSlider(slideId) {
+      editCustomSlide(slideId);
     }
 
     function moveSlide(slideId, targetIndex) {
@@ -2278,13 +2483,20 @@
 
     function showToolPanel(tool) {
       addSliderForm.hidden = tool !== 'slider';
+      addButtonsForm.hidden = tool !== 'buttons';
       addMediaForm.hidden = tool !== 'media';
       toggleAddMenu(false);
+      if (tool !== 'slider') delete addSliderForm.dataset.editingSlideId;
+      if (tool !== 'buttons') delete addButtonsForm.dataset.editingSlideId;
       if (tool === 'slider' && !addSliderForm.dataset.editingSlideId) {
         addSliderForm.querySelector('.tool-button').textContent = 'Add Slider';
         renderSliderLabelFields({});
       }
-      const activeForm = tool === 'slider' ? addSliderForm : addMediaForm;
+      if (tool === 'buttons' && !addButtonsForm.dataset.editingSlideId) {
+        addButtonsForm.querySelector('button[type="submit"]').textContent = 'Add Button Slide';
+        populateButtonChoiceFields(['', '', '']);
+      }
+      const activeForm = tool === 'slider' ? addSliderForm : tool === 'buttons' ? addButtonsForm : addMediaForm;
       activeForm.querySelector('input, select')?.focus();
     }
 
@@ -2326,6 +2538,11 @@
     function goToSlide(index) {
       currentSlide = Math.max(0, Math.min(index, slides.length - 1));
       updateDeck();
+    }
+
+    function goToSlideId(slideId) {
+      const targetIndex = slideOrder.indexOf(slideId);
+      if (targetIndex >= 0) goToSlide(targetIndex);
     }
 
     function nextSlide() { goToSlide(currentSlide + 1); }
@@ -2421,7 +2638,10 @@
     [sliderMinInput, sliderMaxInput].forEach((input) => {
       input?.addEventListener('input', () => renderSliderLabelFields());
     });
+    buttonChoiceCountInput?.addEventListener('input', () => renderButtonChoiceFields());
+    updateButtonChoiceCountButton?.addEventListener('click', () => renderButtonChoiceFields());
     renderSliderLabelFields({});
+    renderButtonChoiceFields(['', '', '']);
 
     document.addEventListener('click', (event) => {
       if (!addMenu.hidden && !event.target.closest('.editor-title-row')) {
@@ -2465,6 +2685,22 @@
       sliderMinInput.value = '1';
       sliderMaxInput.value = '5';
       renderSliderLabelFields({});
+    });
+    addButtonsForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const choices = collectButtonChoices();
+      const editingSlideId = addButtonsForm.dataset.editingSlideId;
+      if (editingSlideId) {
+        updateButtonsSlide(editingSlideId, buttonsQuestionInput.value.trim() || 'Click all that apply:', choices);
+        delete addButtonsForm.dataset.editingSlideId;
+        addButtonsForm.querySelector('button[type="submit"]').textContent = 'Add Button Slide';
+      } else {
+        createButtonsSlide(buttonsQuestionInput.value.trim() || 'Click all that apply:', choices);
+      }
+      addButtonsForm.reset();
+      buttonChoiceCountInput.value = '3';
+      renderButtonChoiceFields(['', '', '']);
+      addButtonsForm.hidden = true;
     });
     addMediaForm?.addEventListener('submit', (event) => {
       event.preventDefault();
